@@ -1,10 +1,12 @@
+package main;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.Random;
 import java.io.File;
 
-public class Minesweeper extends JFrame {
+public class Minesweeper extends JPanel {
+    private JFrame frame;
     private final int ROWS = 9;
     private final int COLS = 9;
     private final int MINES = 10;
@@ -22,9 +24,9 @@ public class Minesweeper extends JFrame {
     }
 
     public Minesweeper() {
-        setTitle("Minesweeper");
-        setSize(400, 400);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+//        setTitle("main.Minesweeper");
+//        setSize(400, 400);
+//        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new GridLayout(ROWS, COLS));
 
         loadIcons();
@@ -123,16 +125,44 @@ public class Minesweeper extends JFrame {
         if (board[r][c].mine) {
             setBombAppearance(buttons[r][c]);
             showAllMines();
-            JOptionPane.showMessageDialog(this, "Game Over!");
             gameOver = true;
-            dispose();
-            System.exit(0);
+            int choice = JOptionPane.showOptionDialog(
+                    this,
+                    "Game Over! Would you like to play again?",
+                    "Game Over",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    new String[]{"Replay", "Exit"},
+                    "Replay"
+            );
+            if (choice == JOptionPane.YES_OPTION) {
+                resetGame();
+            } else {
+                System.exit(0);
+            }
         } else if (checkWin()) {
             showAllMines();
-            JOptionPane.showMessageDialog(this, "You Win!");
+//            JOptionPane.showMessageDialog(this, "You Win!");
+//            gameOver = true;
+//            System.exit(0);
+//        }
             gameOver = true;
-            dispose();
-            System.exit(0);
+            int choice = JOptionPane.showOptionDialog(
+                    this,
+                    "You Win! Would you like to play again?",
+                    "Victory!",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    new String[]{"Replay", "Exit"},
+                    "Replay"
+            );
+            if (choice == JOptionPane.YES_OPTION) {
+                resetGame();
+            } else {
+                System.exit(0);
+            }
         }
     }
 
@@ -180,7 +210,7 @@ public class Minesweeper extends JFrame {
         return r >= 0 && r < ROWS && c >= 0 && c < COLS;
     }
 
-    private boolean checkWin() {
+    protected boolean checkWin() {
         for (int r = 0; r < ROWS; r++)
             for (int c = 0; c < COLS; c++)
                 if (!board[r][c].mine && !board[r][c].revealed)
@@ -188,7 +218,22 @@ public class Minesweeper extends JFrame {
         return true;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(Minesweeper::new);
+    private void resetGame() {
+        removeAll(); // Remove all existing buttons from panel
+        board = new Cell[ROWS][COLS];
+        buttons = new JButton[ROWS][COLS];
+        gameOver = false;
+        minesGenerated = false;
+
+        setLayout(new GridLayout(ROWS, COLS));
+        initBoard();
+        createButtons();
+
+        revalidate();
+        repaint();
     }
+
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(Minesweeper::new);
+//    }
 }
