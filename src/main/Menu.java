@@ -9,34 +9,58 @@ public class Menu extends JFrame {
     private JPanel mainPanel;
     private Minesweeper gamePanel;
     private int width = 800, height = 600;
+    private JPanel menuPanel = new JPanel(new BorderLayout());
 
     public Menu() {
+        setupFrame();
+        buidingLayout();
+        createPanels();
+        createButtons();
+        setVisible(true);
+    }
+
+    private void startGame() {
+        cardLayout.show(mainPanel, "Game");
+    }
+
+    private void setupFrame() {
         setTitle("Minesweeper");
         setSize(width, height);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
+    }
 
+    private void buidingLayout() {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
+        add(mainPanel);
+    }
 
-        // ==== MENU PANEL ====
-        JPanel menuPanel = new JPanel(new BorderLayout());
+    private void createPanels() {
+
+        gamePanel = new Minesweeper();
+        mainPanel.add(menuPanel, "Menu");
+        mainPanel.add(gamePanel, "Game");
+    }
+
+    private void createButtons() {
+        JPanel buttonPanel = new JPanel(null);
 
         JLabel titleLabel = new JLabel("MINESWEEPER", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
         titleLabel.setForeground(Color.BLUE);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        menuPanel.add(titleLabel, BorderLayout.NORTH);
 
-        JPanel buttonPanel = new JPanel(null);
+        menuPanel.add(titleLabel, BorderLayout.NORTH);
+        menuPanel.add(buttonPanel, BorderLayout.CENTER);
+
         buttonPanel.setPreferredSize(new Dimension(width, height));
 
         int x = width / 4;
         int y = height / 2 - 60;
         int w = width / 2;
         int h = 50;
-
         Button startButton = new Button("Start", x, y, w, h);
         Button exitButton = new Button("Exit", x, y + 70, w, h);
 
@@ -45,25 +69,6 @@ public class Menu extends JFrame {
 
         buttonPanel.add(startButton.getButton());
         buttonPanel.add(exitButton.getButton());
-
-        menuPanel.add(buttonPanel, BorderLayout.CENTER);
-
-        // ==== GAME PANEL ====
-        gamePanel = new Minesweeper();
-
-        // ==== ADD TO MAIN PANEL ====
-        mainPanel.add(menuPanel, "Menu");
-        mainPanel.add(gamePanel, "Game");
-
-        add(mainPanel);
-        setVisible(true);
     }
 
-    protected void startGame() {
-        cardLayout.show(mainPanel, "Game");
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(Menu::new);
-    }
 }
