@@ -7,27 +7,19 @@ import ui.Button;
 public class Menu extends JFrame {
     private CardLayout cardLayout;
     private JPanel mainPanel;
+    private JPanel menuPanel;
+    private JPanel buttonPanel;
     private Minesweeper gamePanel;
+
     private int width = 800, height = 800;
-    private JPanel menuPanel = new JPanel(new BorderLayout());
+    private ImageIcon backgroundImage = new ImageIcon("src/assets/textures/ms_menu.png");
 
     public Menu() {
         setupFrame();
         buildLayout();
         createPanels();
-        createButtons();
+        createStartExitButtons();
         setVisible(true);
-    }
-
-    private void startGame(int rows, int cols, int mines) {
-        if (gamePanel != null) {
-            mainPanel.remove(gamePanel);
-        }
-        gamePanel = new Minesweeper(rows, cols, mines);
-        mainPanel.add(gamePanel, "Game");
-        cardLayout.show(mainPanel, "Game");
-        revalidate();
-        repaint();
     }
 
     private void setupFrame() {
@@ -45,47 +37,80 @@ public class Menu extends JFrame {
     }
 
     private void createPanels() {
+        menuPanel = new JPanel(new BorderLayout()) {
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+
+        buttonPanel = new JPanel(null);
+        buttonPanel.setOpaque(false);
+        menuPanel.add(buttonPanel, BorderLayout.CENTER);
         mainPanel.add(menuPanel, "Menu");
     }
 
-    private void createButtons() {
-        JPanel buttonPanel = new JPanel(null);
+    private void createStartExitButtons() {
+        buttonPanel.removeAll();
 
-        JLabel titleLabel = new JLabel("MINESWEEPER", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        titleLabel.setForeground(Color.BLUE);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-
-        menuPanel.add(titleLabel, BorderLayout.NORTH);
-        menuPanel.add(buttonPanel, BorderLayout.CENTER);
-
-        buttonPanel.setPreferredSize(new Dimension(width, height));
-
-        int x = width / 4;
-        int y = height / 2 - 110;
-        int w = width / 2;
+        int w = 200;
         int h = 50;
+        int x = (width - w) / 2;
+        int startY = height - 180;
+
+        Button startButton = new Button("Start", x, startY, w, h);
+        Button exitButton = new Button("Exit", x, startY + 70, w, h);
+
+        startButton.getButton().addActionListener(e -> showDifficultyButtons());
+        exitButton.getButton().addActionListener(e -> System.exit(0));
+
+        buttonPanel.add(startButton.getButton());
+        buttonPanel.add(exitButton.getButton());
+
+        buttonPanel.revalidate();
+        buttonPanel.repaint();
+    }
+
+    private void showDifficultyButtons() {
+        buttonPanel.removeAll();
+
+        int w = 200;
+        int h = 50;
+        int x = (width - w) / 2;
+        int startY = height - 280;
         int spacing = 60;
 
-        // Difficulty buttons
-        Button easyBtn = new Button("Easy (13x13, 20 mines)", x, y, w, h);
-        Button normalBtn = new Button("Normal (15x15, 30 mines)", x, y + spacing, w, h);
-        Button hardBtn = new Button("Hard (17x17, 42 mines)", x, y + spacing * 2, w, h);
-        Button expertBtn = new Button("Expert (19x19, 68 mines)", x, y + spacing * 3, w, h);
+        String[] levels = {"Easy", "Normal", "Hard", "Expert"};
+        int[][] settings = {
+                {13, 13, 20},
+                {15, 15, 30},
+                {17, 17, 42},
+                {19, 19, 68}
+        };
 
-        Button exitBtn = new Button("Exit", x, y + spacing * 4 + 20, w, h);
+        for (int i = 0; i < levels.length; i++) {
+            Button levelBtn = new Button(levels[i], x, startY + (i * spacing), w, h);
+            int rows = settings[i][0];
+            int cols = settings[i][1];
+            int mines = settings[i][2];
 
-        easyBtn.getButton().addActionListener(e -> startGame(13, 13, 20));
-        normalBtn.getButton().addActionListener(e -> startGame(15, 15, 30));
-        hardBtn.getButton().addActionListener(e -> startGame(17, 17, 42));
-        expertBtn.getButton().addActionListener(e -> startGame(19, 19, 68));
+            levelBtn.getButton().addActionListener(e -> {
+                gamePanel = new Minesweeper(rows, cols, mines, this, this::returnToMenu);
+                mainPanel.add(gamePanel, "Game");
+                cardLayout.show(mainPanel, "Game");
+            });
 
-        exitBtn.getButton().addActionListener(e -> System.exit(0));
+            buttonPanel.add(levelBtn.getButton());
+        }
 
-        buttonPanel.add(easyBtn.getButton());
-        buttonPanel.add(normalBtn.getButton());
-        buttonPanel.add(hardBtn.getButton());
-        buttonPanel.add(expertBtn.getButton());
-        buttonPanel.add(exitBtn.getButton());
+        buttonPanel.revalidate();
+        buttonPanel.repaint();
+    }
+
+    public void returnToMenu() {
+        mainPanel.remove(gamePanel);
+        gamePanel = null;
+        cardLayout.show(mainPanel, "Menu");
+        createStartExitButtons();
     }
 }
