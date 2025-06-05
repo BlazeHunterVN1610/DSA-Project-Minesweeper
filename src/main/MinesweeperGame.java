@@ -1,6 +1,6 @@
 package main;
 
-public class Main {
+public class MinesweeperGame {
     public static void main(String[] args) throws Exception {
         Menu menu = new Menu();
     }
