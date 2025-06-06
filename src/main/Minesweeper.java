@@ -84,7 +84,7 @@ public class Minesweeper extends JPanel {
 
         timerLabel = new JLabel("Time: 0s");
         timerLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        timerLabel.setForeground(Color.BLUE);
+        timerLabel.setForeground(Color.ORANGE);
         timerLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
         JPanel topBar = new JPanel(new BorderLayout()) {
@@ -204,12 +204,12 @@ public class Minesweeper extends JPanel {
 
         if (cell.mine) {
             gameOver = true;
-            swingTimer.stop(); // ⛔️ Stop the timer immediately
+            swingTimer.stop();
             revealAllMines();
             showGameOverDialog("Game Over! Play again?");
         } else if (checkWin()) {
             gameOver = true;
-            swingTimer.stop(); // ⛔️ Stop the timer immediately
+            swingTimer.stop();
             revealAllMines();
             showGameOverDialog("You Win! Play again?");
         }

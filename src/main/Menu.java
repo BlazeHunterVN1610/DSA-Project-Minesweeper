@@ -16,9 +16,9 @@ public class Menu extends JFrame {
 
     public Menu() {
         setupFrame();
-        buildLayout();
+        buildingLayout();
         createPanels();
-        createStartExitButtons();
+        createButtons();
         setVisible(true);
     }
 
@@ -30,7 +30,7 @@ public class Menu extends JFrame {
         setResizable(false);
     }
 
-    private void buildLayout() {
+    private void buildingLayout() {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
         add(mainPanel);
@@ -50,7 +50,7 @@ public class Menu extends JFrame {
         mainPanel.add(menuPanel, "Menu");
     }
 
-    private void createStartExitButtons() {
+    private void createButtons() {
         buttonPanel.removeAll();
 
         int w = 200;
@@ -61,7 +61,7 @@ public class Menu extends JFrame {
         Button startButton = new Button("Start", x, startY, w, h);
         Button exitButton = new Button("Exit", x, startY + 70, w, h);
 
-        startButton.getButton().addActionListener(e -> showDifficultyButtons());
+        startButton.getButton().addActionListener(e -> createDifficultyButtons());
         exitButton.getButton().addActionListener(e -> System.exit(0));
 
         buttonPanel.add(startButton.getButton());
@@ -71,7 +71,7 @@ public class Menu extends JFrame {
         buttonPanel.repaint();
     }
 
-    private void showDifficultyButtons() {
+    private void createDifficultyButtons() {
         buttonPanel.removeAll();
 
         int w = 200;
@@ -111,6 +111,6 @@ public class Menu extends JFrame {
         mainPanel.remove(gamePanel);
         gamePanel = null;
         cardLayout.show(mainPanel, "Menu");
-        createStartExitButtons();
+        createButtons();
     }
 }
